@@ -93,6 +93,13 @@
                         MeetingPlatform = "Webex"
                         Address = `${document.getElementById("webex_mtg_id").value.replaceAll(' ','')}@webex.com`
                         break
+                    case "link":
+                        Protocol = "WebRTC"
+                        MeetingPlatform = "MicrosoftTeams"
+                        Address = document.getElementById("teams_mtg_link").value.replaceAll(' ','')
+                        console.log(Address)
+                        break
+
                 }
 
                 axios({
@@ -151,15 +158,19 @@
 
             <ul class="nav nav-tabs" id="protoTab">
                 <li class="nav-item">
-                  <button class="nav-link active text-primary" id="sip-tab" data-bs-toggle="tab" data-bs-target="#sip-tab-pane" type="button">SIP</button>
+                  <button class="nav-link active text-primary" data-bs-toggle="tab" data-bs-target="#sip-tab-pane" type="button">SIP</button>
                 </li>
                 <li class="nav-item">
-                  <button class="nav-link teams-text" id="profile-tab" data-bs-toggle="tab" data-bs-target="#teams-tab-pane" type="button">Teams</button>
+                  <button class="nav-link teams-text" data-bs-toggle="tab" data-bs-target="#teams-tab-pane" type="button">TeamsID</button>
                 </li>
                 <li class="nav-item">
-                  <button class="nav-link text-success" id="contact-tab" data-bs-toggle="tab" data-bs-target="#webex-tab-pane" type="button">Webex</button>
+                  <button class="nav-link text-success" data-bs-toggle="tab" data-bs-target="#webex-tab-pane" type="button">Webex</button>
                 </li>
+                <li class="nav-item">
+                    <button class="nav-link teams-text" data-bs-toggle="tab" data-bs-target="#link-tab-pane" type="button">TeamsLink</button>
+                </li>  
               </ul>
+
               <div class="tab-content" id="protoTabContent">
                 <div class="tab-pane fade show active mt-3" id="sip-tab-pane">
                     <div class="input-group mb-3">
@@ -176,15 +187,21 @@
                         <input class="form-control " type="text" id="teams_mtg_pwd">
                         <button class="btn teams-btn" type="button" onclick="PushOBTP(`teams`)">+ Add Teams Meeting</button>
                     </div>
-
                 </div>
                 <div class="tab-pane fade mt-3" id="webex-tab-pane">
                     <div class="input-group mb-3">
-                    <span class="input-group-text">Meeting Nr:</span>
-                    <input class="form-control" type="text" id="webex_mtg_id">
-                    <button class="btn btn-success" type="button" onclick="PushOBTP(`webex`)">+ Add Webex Meeting</button>
+                        <span class="input-group-text">Meeting Nr:</span>
+                        <input class="form-control" type="text" id="webex_mtg_id">
+                        <button class="btn btn-success" type="button" onclick="PushOBTP(`webex`)">+ Add Webex Meeting</button>
+                    </div>
                 </div>
-</div>
+                <div class="tab-pane fade mt-3" id="link-tab-pane">
+                    <div class="mb-3">
+                        <label for="invite" class="form-label">Paste the MS Teams invite here:</label>
+                        <textarea class="form-control" id="teams_mtg_link" rows="5"></textarea>
+                        <button class="btn teams-btn" type="button" onclick="PushOBTP(`link`)">+ Add Teams Meeting</button>
+                    </div>
+                </div>
               </div>
 
             <div class="mb-3">
