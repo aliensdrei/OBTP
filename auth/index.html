@@ -11,6 +11,15 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../fonts.css">
+    <style>
+        .teams-btn {
+            background-color: #6610f2;
+            color: #fff;
+        }
+        .teams-text {
+            color: #6610f2 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -63,8 +72,28 @@
                     .catch((error) => console.log(error));
             }
 
-            function PushOBTP() {
+            function PushOBTP(tip) {
                 const date1 = new Date(document.getElementById("mtg_date").value)
+                let Protocol = "", MeetingPlatform = "", Address = ""
+
+                switch (tip){
+                    case "sip":
+                        Protocol = "SIP"
+                        MeetingPlatform = "Other"
+                        Address = document.getElementById("sip_address").value
+                        break
+                    case "teams":
+                        Protocol = "WebRTC"
+                        MeetingPlatform = "MicrosoftTeams"
+                        Address = `https://teams.microsoft.com/meet/${document.getElementById("teams_mtg_id").value.replaceAll(' ','')}?p=${document.getElementById("teams_mtg_pwd").value}&webjoin=true&dgjPartnerID=CSCO`
+                        console.log(Address)
+                        break
+                    case "webex":
+                        Protocol ="Spark"
+                        MeetingPlatform = "Webex"
+                        Address = `${document.getElementById("webex_mtg_id").value.replaceAll(' ','')}@webex.com`
+                        break
+                }
 
                 axios({
                     method: "POST",
@@ -81,12 +110,12 @@
                             "Bookings": [
                                 {
                                     "Id": "1",
-                                    "Number": document.getElementById("address").value,
+                                    "Number": Address,
                                     "Organizer": {
                                         "Name": document.getElementById("organizer").value
                                     },
-                                    "Protocol": "SIP",
-                                    "MeetingPlatform": "Webex",
+                                    "Protocol": Protocol,
+                                    "MeetingPlatform": MeetingPlatform,
                                     "Time": {
                                         "Duration": Number(document.getElementById("durata").value),
                                         "StartTime": date1.toISOString(),
@@ -99,7 +128,6 @@
                     },
                 })
                     .then((response) => {
-//                        document.getElementById("invite").value = JSON.stringify(response.data.result, null, 2)
                         console.log(response.data.result);
                     })
                     .catch((error) => console.log(error));
@@ -112,23 +140,54 @@
     <div class="card mt-5 w-50 mx-auto border border-success">
         <div class="card-header bg-light">OBTP Calendar Push</div>
         <div class="card-body">
-
             <div class="mb-3">
                 <div class="input-group">
                     <select class="form-select" id="devices">
                         <option selected value="">Select the device...</option>
                     </select>
-                    <button class="btn btn-success" type="button" onclick="PushOBTP()">+ Add Meeting</button>
                     <button class="btn btn-danger" type="button" onclick="ClearOBTP()">Delete All</button>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <div class="input-group mb-3">
-                    <span class="input-group-text">Adresa/Numar:</span>
-                    <input class="form-control" type="text" id="address">
+            <ul class="nav nav-tabs" id="protoTab">
+                <li class="nav-item">
+                  <button class="nav-link active text-primary" id="sip-tab" data-bs-toggle="tab" data-bs-target="#sip-tab-pane" type="button">SIP</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link teams-text" id="profile-tab" data-bs-toggle="tab" data-bs-target="#teams-tab-pane" type="button">Teams</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link text-success" id="contact-tab" data-bs-toggle="tab" data-bs-target="#webex-tab-pane" type="button">Webex</button>
+                </li>
+              </ul>
+              <div class="tab-content" id="protoTabContent">
+                <div class="tab-pane fade show active mt-3" id="sip-tab-pane">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Adresa/Numar:</span>
+                        <input class="form-control" type="text" id="sip_address">
+                        <button class="btn btn-primary" type="button" onclick="PushOBTP(`sip`)">+ Add SIP Meeting</button>
+                    </div>
                 </div>
+                <div class="tab-pane fade mt-3" id="teams-tab-pane">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Meeting Id:</span>
+                        <input class="form-control" type="text" id="teams_mtg_id">
+                        <span class="input-group-text">Password:</span>
+                        <input class="form-control " type="text" id="teams_mtg_pwd">
+                        <button class="btn teams-btn" type="button" onclick="PushOBTP(`teams`)">+ Add Teams Meeting</button>
+                    </div>
 
+                </div>
+                <div class="tab-pane fade mt-3" id="webex-tab-pane">
+                    <div class="input-group mb-3">
+                    <span class="input-group-text">Meeting Nr:</span>
+                    <input class="form-control" type="text" id="webex_mtg_id">
+                    <button class="btn btn-success" type="button" onclick="PushOBTP(`webex`)">+ Add Webex Meeting</button>
+                </div>
+</div>
+              </div>
+
+            <div class="mb-3">
                 <div class="input-group mb-3">
                     <span class="input-group-text">Data/Ora:</span>
                     <input type="datetime-local" class="form-control" id="mtg_date">
